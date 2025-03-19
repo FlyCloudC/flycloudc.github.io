@@ -1,0 +1,82 @@
+/*--------------
+|    全局操作    |
+--------------*/
+:root {
+  --transition-color: color 0.3s ease, background-color 0.3s ease;
+
+  /* 夜间模式 */
+  --primary-color: #426f95;
+  --secondary-color: #5c6bc0;
+  --background-color: #0d1b2a;
+  --background-color-card: #00000044;
+  --text-color: #bbc1cd;
+  --text-color-emphasis: #e3eaf2;
+  --text-color-annotation: #6b7d8d;
+  --border-color: #24344e;
+
+  --card-border: 1px solid var(--border-color);
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  --svg-filter: invert(75%);
+}
+
+[data-theme="light"] {
+  /* 白天模式 */
+  --primary-color: #1e88e5;
+  --secondary-color: #42a5f5;
+  --background-color: #bbe2ff;
+  --background-color-card: #ffffff77;
+  --text-color: #2a3e43;
+  --text-color-emphasis: #000000;
+  --text-color-annotation: #718096;
+  --border-color: #99ccff;
+
+  --svg-filter: none;
+}
+
+:root {
+  line-height: 1.6em;
+}
+
+body {
+  background-color: var(--background-color);
+}
+
+u {
+  text-underline-offset: 0.15em;
+}
+
+a {
+  color: var(--text-color-emphasis);
+  text-underline-offset: 0.15em;
+  transition: var(--transition-color);
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--secondary-color);
+  }
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border-color);
+}
+
+code {
+  margin: 1em 0;
+  display: block;
+  overflow-x: auto;
+  white-space: pre;
+  padding: 0.25em 0.5em;
+  background-color: var(--background-color-card);
+  border: 1px solid var(--border-color);
+}
+
+blockquote {
+  margin: 1.5em 0;
+  padding: 0.5em 1em;
+  border-left: 4px solid var(--primary-color);
+  background-color: var(--background-color-card);
+  /* font-style: italic; */
+}

@@ -1,0 +1,83 @@
+/*--------------
+|     外观      |
+--------------*/
+root-app {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: var(--transition-color);
+
+  >main>post-section {
+    box-shadow: var(--card-shadow);
+  }
+
+  >footer {
+    opacity: 0.7;
+    font-size: small;
+    text-align: center;
+  }
+}
+
+
+/*--------------
+|     边框      |
+--------------*/
+root-app {
+  --dashed-border: 1.5px dashed var(--border-color);
+  --dashed-border-image: repeating-linear-gradient(to right,
+      var(--border-color),
+      var(--border-color) 4px,
+      transparent 5px,
+      transparent 8px) 1;
+
+  >main>post-section {
+    border: var(--card-border);
+    border-radius: 1rem;
+  }
+
+  >footer {
+    border-top: var(--dashed-border);
+    border-image: var(--dashed-border-image);
+  }
+}
+
+/*--------------
+|     布局      |
+--------------*/
+root-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+
+  >footer {
+    padding: 1rem 0.5rem;
+  }
+
+  >main {
+    margin: 1rem 0;
+
+    >post-section {
+      padding: 1rem;
+    }
+  }
+}
+
+root-app>main {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-start;
+  justify-content: center;
+
+  container-type: inline-size;
+
+  >post-section {
+    flex-grow: 1;
+    background-color: var(--background-color-card);
+    max-width: 40em;
+
+    @container (max-width: 40em) {
+      width: 100%;
+    }
+  }
+}
