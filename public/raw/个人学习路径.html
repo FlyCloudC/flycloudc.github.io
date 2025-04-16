@@ -6,7 +6,7 @@
   各种各样的编程语言来来去去。在你的生命中，可能会学到好几门。今天是Python和Java。昨天，是Pascal和Cobol。
   再往前还有Fortran和Lisp。谁知道明天是什么？在这个日新月异的领域，你需要能够迅速适应变化。
   一个好的程序员必须学习<b>超越任何具体编程语言的编程原则</b>。从函数式的角度来学习编程，是领会这种原则的绝佳角度。
-  在从头开始学习一门新语言的途中，你会得到反思<u>编程</u>与<u>用某个特定的语言编程</u>之间的差异的机会。
+  从头开始学习一门新语言，你就有机会反思<u>编程</u>与<u>用某个特定的语言编程</u>的区别所在。
   <br><br>
   <i>—— CS3110, 1.3. Look to Your Future</i>
 </blockquote>
@@ -51,12 +51,16 @@
     <li>集大成者，用Scheme写出了各种语言的解释器、编译器。</li>
   </ul>
 
-  <li><a href="https://legacy.cs.indiana.edu/~dyb/papers/3imp.pdf">Three Implementation Models for Scheme</a></li>
+  <li>
+    <a href="https://legacy.cs.indiana.edu/~dyb/papers/3imp.pdf">
+      Three Implementation Models for Scheme
+    </a>
+  </li>
   <ul>
-    <li>三种Scheme到抽象机器码的编译器。一个用链表当函数调用栈，一个用数组当函数调用栈，内含多个变种。从这里可以发现一个display
-      closure就是一个单方法的object。最后还有一个FFP Machine的实现，很少见。</li>
-    <li><a href="https://www.burgerrg.com/TR413.pdf">The Scheme Machine</a>
-      ：进一步将上文的抽象机器码编译到一个真实的机器上。这是一个完全运行Scheme的机器，里面的机器码操纵的都是Scheme中的对象。</li>
+    <li>三种Scheme到抽象机器码的编译器。一个用链表当函数调用栈，一个用数组当函数调用栈。
+      讲了词法作用域、可变变量、call/cc的实现。最后还有一个FFP Machine的实现，很少见。</li>
+    <li><a href="https://www.burgerrg.com/TR413.pdf">The Scheme Machine</a>：
+      进一步将上文的抽象机器码编译到一个硬件机器上。这是一个完全运行Scheme的机器，里面的机器码操纵的都是Scheme中的对象。</li>
   </ul>
 </ul>
 
@@ -71,6 +75,41 @@
   <li><a href="http://mumble.net/~jar/pubs/secureos/secureos.html">基于Lambda演算的安全内核</a></li>
   <ul>
     <li>其中包含了一个与操作系统的类比。</li>
+  </ul>
+</ul>
+
+<h3>Smalltalk</h3>
+
+<p>Smalltalk不只是编程语言，它还是最早的带图形界面的操作系统。</p>
+
+<ul>
+  <li>
+    <a href="https://www.cs.virginia.edu/~evans/cs655/readings/smalltalk.html">Smalltalk背后的设计原则</a>
+  </li>
+  <ul>
+    <li>
+      如果一个系统服务于<i>创造</i>，它必须能被个人<i>完全理解</i>。
+    </li>
+  </ul>
+
+  <li>Squake by example</li>
+  <ul>
+    <li><a href="https://github.com/hpi-swa-lab/SqueakByExample-english/releases/download/6.0/SBE-6.0.pdf"> PDF下载</a>
+    </li>
+    <li>带你游览Smalltalk的世界（这不是比喻，它真的是一个世界）。</li>
+    <li>第13章讲了“一切皆Object”的一些事情。</li>
+  </ul>
+
+  <li>
+    <a href="https://ia801909.us.archive.org/7/items/ALittleSmalltalkBook/ALittleSmalltalk.pdf">
+      A Little Smalltalk
+    </a>
+  </li>
+  <ul>
+    <li>
+      Part Two中讲解了一个Smalltalk系统的C语言实现。
+      在这里面可以看到如何将各种Primitive包装成Object，实现“一切皆Object”的灵活性。
+    </li>
   </ul>
 </ul>
 
@@ -120,6 +159,7 @@
   <li><a href="https://borretti.me/article/introducing-austral">介绍 Austral：一种具有线性类型和能力的系统语言</a></li>
   <ul>
     <li>通过线性类型来保证更强的安全性。</li>
+    <li>展现了一个简洁（无歧义）的语言该有的样子。</li>
   </ul>
 </ul>
 
@@ -128,18 +168,40 @@
 <p>让抽象更上一层楼，讨论关于抽象的抽象。</p>
 
 <ul>
-  <li><a href="https://drsexplorer.gitbooks.io/learnyouahaskell-zh/content/zh-cn/">HASKELL 趣学指南</a>
-  </li>
+  <li><a href="https://drsexplorer.gitbooks.io/learnyouahaskell-zh/content/zh-cn/">HASKELL 趣学指南</a></li>
   <ul>
     <li>对初学者友好，没有云里雾里的范畴论名词。</li>
     <li>讲了传说中的Functor（我觉得应该叫map-able）和Monad（bind-able）。</li>
   </ul>
 </ul>
 
+<h3>Koka</h3>
+
+<p>学术语言。追求简洁正交，并且运行效率也不差。</p>
+
+<ul>
+  <li><a href="https://koka-lang.github.io/koka/doc/book.html">The Koka Programming Language</a></li>
+  <ul>
+    <li>讲了effect是什么，以及如何利用类型系统来约束effect。</li>
+    <li>functional but in-place，特定情况下能将函数式风格的代码直接转换成命令式。</li>
+    <li>语法规则也挺独特的。</li>
+  </ul>
+
+  <li>
+    <a href="https://www.microsoft.com/en-us/research/wp-content/uploads/2021/03/multip-tr-v4.pdf">
+      Generalized Evidence Passing for Effect Handlers
+    </a>
+  </li>
+  <ul>
+    <li>讲了effect系统的实现。看完就知道effect的类型为啥写成那样了。</li>
+    <li>相关资料：<a href="https://ocaml.org/manual/5.3/effects.html">OCaml中的effect</a></li>
+  </ul>
+</ul>
+
 <hr>
 
 <p>
-  你可能会发现以上的语言非常冷门，在此之前你甚至都没听说过。这是因为它们多数出自学术社区，少为工业界使用。
+  以上的语言大部分都非常冷门，大多数人甚至都没听说过。这是因为它们多数出自学术社区，少为工业界使用。
   然而其中的各种好用的特性正在逐渐被工业界的语言吸收。这里引用cs3110中的一段话：
 </p>
 
@@ -156,13 +218,15 @@
   学习这些语言需要专业的引导，这就体现出好教材的重要性。
 </p>
 
-<h2>什么是好的教材</h2>
-
+<p>
+  那什么是好的教材呢？好的教材应该：
 <ul>
   <li>内容是正确的。除非是为了易于理解而进行的适度简化，并在后续部分解释清。</li>
   <li>顺序是正确的。每次引入一个新的概念，只依赖于前面章节已经讲过的概念，而不依赖后面章节要讲的概念。</li>
 </ul>
+</p>
 
+<hr>
 
 <h3>C</h3>
 
@@ -193,7 +257,7 @@
 
 <h3>Python</h3>
 
-<p>动态类型，有很多库。一般用于搞统计分析、数值计算、机器学习。</p>
+<p>动态类型，有很多库。一般用于搞统计分析、数值计算、机器学习。由于经过一次回炉重造，改正了不少历史包袱。</p>
 
 <ul>
   <li>计算机程序的构造与解释（SICP）</li>
@@ -204,8 +268,21 @@
   </ul>
 </ul>
 
+<h3>Lua</h3>
+
+<p>动态类型，小巧简洁。和Scheme有许多相似之处。初看有些杂乱，细看其实是一致的。</p>
+
+<ul>
+  <li>Programming in Lua</li>
+  <ul>
+    <li><a href="https://lua.xfoss.com/lua_tutorial.html">中文版</a></li>
+    <li>在编译时对环境、全局变量的处理（第17、23章）</li>
+    <li>非对称协程（第25章）</li>
+  </ul>
+</ul>
+
 <hr>
 
 <p>
-  以上材料是基本是按照编程语言分类，并非我实际的学习顺序。
+  以上材料大体按照编程语言分类，并非实际学习顺序。
 </p>
