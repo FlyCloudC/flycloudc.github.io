@@ -1,0 +1,344 @@
+<h1>函数式01背包</h1>
+
+<hr>
+
+<p>
+  01背包是算法竞赛中的经典dp题目，当年我在这上面吃了不少苦头，每次写背包问题都晕头转向。
+  本文一共包含5个版本的代码。第一个版本是最朴素的枚举法，在不断的改进下，将最终变成一个dp解法。
+</p>
+
+<p>
+  本文采用的编程语言是F#，一个函数式编程语言。如果你熟悉Haskell或者Rust应该能在提示下看懂。
+</p>
+
+<p>
+  可以在<a>gist</a>上查看带高亮的完整代码。
+</p>
+
+<hr>
+
+<h2>问题定义</h2>
+
+<p>有若干个物品，每件物品的有重量 weight 和价值 value：</p>
+
+<code>type item = { weight: int; value: int }
+let item_weight item = item.weight
+let item_value item = item.value
+</code>
+
+<p>
+  背包dp问题：给定一个物品列表，和一个背包的容量。从中选出若干件物品，使得物品的总重量不超过背包的容量，且物品的总价值最大。
+</p>
+
+<code>type solution = item list -> int -> item list</code>
+
+<hr>
+
+<h2>一、暴力枚举</h2>
+
+<p>
+  首先，我们定义物品组合为物品的列表。物品组合的总重量就是这个列表中所有物品按重量求和，总价值同理。
+  写F#代码就像讲废话一样轻松xd。
+</p>
+
+<code>type combination = item list
+let total_weight comb = List.sumBy item_weight comb
+let total_value comb = List.sumBy item_value comb</code>
+
+<p>
+  在F#中，<code>::</code>是列表拼接运算符，<code>a :: b</code>表示<u>把元素 a 加入到列表 b 的开头</u>得到的新列表。
+  我们定义函数<code>add</code>表示把物品加入到一个物品组合中。
+</p>
+
+<code>let add item comb = item :: comb</code>
+
+<p>F#中的<code>add item comb</code>相当于其它语言中的<code>add(item, comb)</code>。</p>
+
+<p>空的物品组合就是一个空列表：</p>
+
+<code>let empty_combination = []</code>
+
+<p>
+  接下来，我们想办法先枚举所有的组合。函数<code>all_combinations</code>接受一个物品的列表，返回由这些物品构成的所有可能的组合的列表。
+  我们按物品列表是否为空来分情况讨论：
+<ul>
+  <li>如果物品列表为空，那么唯一的一种组合方式就是空的物品组合；</li>
+  <li>
+    否则，一定存在第一个物品item1。我们先递归地求出那些不包含第一个物品的组合，再想办法求出那些包含第一个物品的组合。
+    后一种组合其实是和前一种组合一一对应的，只需要把第一个物品加入其中。
+    把这两者拼接起来，即为最终结果。
+  </li>
+</ul>
+</p>
+
+<code>let rec all_combinations (items: item list) : combination list =
+    match items with
+    | [] -> [ empty_combination ]
+    | item1 :: item_rest ->
+        let comb_without_item1 = all_combinations item_rest
+        let comb_with_item1 = List.map (add item1) comb_without_item1
+        List.append comb_with_item1 comb_without_item1</code>
+
+<p>
+  问题的解法很直白：
+<ol>
+  <li>先枚举所有的组合；</li>
+  <li>把那些超过背包容量的组合给过滤掉；</li>
+  <li>从中挑出价值最大的那个组合。</li>
+</ol>
+</p>
+
+<code>let solve (items: item list) (capacity: int) : item list =
+    all_combinations items
+    |> List.filter (fun comb -> total_weight comb <= capacity)
+    |> List.maxBy total_value</code>
+
+<hr>
+
+<h2>二、物品组合应该记录总重量和总价值</h2>
+
+<p>
+  我们修改物品组合的表示，现在它不单纯的是一个物品的列表，还带有额外的信息，即这个组合的总重量和总价值。
+  这使得<code>total_value</code>和<code>total_weight</code>不再需要遍历列表求和，时间复杂度由O(n)降到了O(1)。
+  这为后续的改进做了铺垫。
+</p>
+
+<code>type combination =
+    { total_weight: int
+      total_value: int
+      items: item list }
+
+let empty_combination =
+    { total_weight = 0
+      total_value = 0
+      items = [] }
+
+let add item comb =
+    { total_weight = comb.total_weight + item.weight
+      total_value = comb.total_value + item.value
+      items = item :: comb.items }
+
+let total_weight comb = comb.total_weight
+let total_value comb = comb.total_value</code>
+
+<p>相应的，<code>solve</code>需要再进行一步提取：</p>
+
+<code>let solve (items: item list) (capacity: int) : item list =
+    let comb =
+        all_combinations items
+        |> List.filter (fun conb -> total_weight conb <= capacity)
+        |> List.maxBy total_value
+
+    comb.items</code>
+
+<hr>
+
+<h2>三、提前过滤，仅枚举有效的组合</h2>
+
+<p>
+  在之前，<u>枚举所有的组合</u>和<u>过滤装不下的组合</u>是不相干的两个过程。这导致枚举出了很多无效的组合。
+</p>
+
+<p>
+  注意到，是<code>add item1</code>这一步产生了无效的组合，所以改进方法就是：仅向<u>能装下item1的组合</u>添加item1。
+</p>
+
+<p>
+  我们将<code>all_combinations</code>改名为<code>all_combinations_valid</code>，以表明它返回的组合都是能装入背包的。
+</p>
+
+<code>let solve (items: item list) (capacity: int) : item list =
+    let can_add item comb =
+        total_weight comb + item.weight <= capacity
+
+    // all_combinations 函数被放入了 solve 内，是因为它现在需要利用 solve 的参数 capacity
+    let rec all_combinations_valid (items: item list) : combination list =
+        match items with
+        | [] -> [ empty_combination ]
+        | item1 :: item_rest ->
+            let combs_without_item1 = all_combinations_valid item_rest
+            // 先找出能装下 item1 的组合
+            let combs_can_add_item1 = List.filter (can_add item1) combs_without_item1
+            // 再往里面添加 item1
+            let combs_with_item1 = List.map (add item1) combs_can_add_item1
+            List.append combs_with_item1 combs_without_item1
+
+    let comb =
+        all_combinations_valid items // 此时不再需要过滤了
+        |> List.maxBy total_value
+
+    comb.items</code>
+
+<p>
+  通过查看代码，很容易证明<code>all_combinations_valid</code>的正确性——返回的所有组合确实都是能装入背包的。
+</p>
+
+<hr>
+
+<h2>四、依靠升序的性质，提前结束过滤</h2>
+
+<p>
+  在上个版本，为了过滤出那些能装下item1的组合，我们必须遍历<code>all_combinations_valid</code>返回的每一个组合。
+</p>
+
+<p>
+  注意到：如果一个组合没法放入item1，那么比这个组合总重量更大的那些组合也一定都无法放入item1。
+  这也就是说，如果<code>all_combinations_valid</code>能返回一个<u>按总重量升序排列</u>的组合列表，那么过滤时就不需要遍历完整个列表了。
+</p>
+
+<p>下面修改的地方有三处：
+<ol>
+  <li>继续给<code>all_combinations_valid</code>改名，以时刻提醒我们它返回的结果所满足的性质；</li>
+  <li>把<code>List.filter</code>换成<code>List.takeWhile</code>，以在过滤的中途推出；</li>
+  <li>为了保持升序，合并列表不再使用简单地拼接。</li>
+</ol>
+</p>
+<code>let solve (items: item list) (capacity: int) : item list =
+    ...
+    let rec all_combinations_valid_ordered (items: item list) : combination list =
+        match items with
+        | [] -> [ empty_combination ]
+        | item1 :: item_rest ->
+            let combs_without_item1 = all_combinations_valid_ordered item_rest
+            // 使用takeWhile，只保留能放入 item1 的组合
+            let combs_can_add_item1 = List.takeWhile (can_add item1) combs_without_item1
+            let combs_with_item1 = List.map (add item1) combs_can_add_item1
+
+            merge_keep_order combs_with_item1 combs_without_item1
+    ...</code>
+
+<p>
+  保序地合并两个有序列表，如果你写过归并排序就会很熟悉：
+</p>
+
+<code>// 前置条件：combs_a 和 combs_a 是有序列表
+// 后置条件：结果是有序列表
+let rec merge_keep_order combs_a combs_b =
+    match combs_a, combs_b with
+    | [], _ -> combs_b
+    | _, [] -> combs_a
+    | a1 :: combs_a_rest, b1 :: combs_b_rest ->
+        if total_weight a1 <= total_weight b1 then
+            a1 :: merge_keep_order combs_a_rest combs_b
+        else
+            b1 :: merge_keep_order combs_a combs_b_rest</code>
+
+<p>
+  虽然看起来有点啰嗦，但我还是想提一句：
+  通过查看代码，很容易证明<code>all_combinations_valid_ordered</code>的正确性——返回的组合列表确实是按总重量升序排列的。
+</p>
+
+<hr>
+
+<h2>五、去除冗余的组合，以达到最优时间复杂度</h2>
+
+<p>
+  对于两个<u>总重量相同</u>的组合而言，那个<u>总价值更高</u>的组合在任何情况下都更好。因此，我们只需要保留它。
+</p>
+
+<p>
+  注意到，总重量相同的组合只会在合并时被引入。而由于被合并的列表刚好<u>按总重量升序排列</u>，<u>总重量相同的组合</u>就可以在合并时找出。
+</p>
+
+<p>
+  我们只需要在<code>merge_keep_order</code>的末尾新增一种情况。
+  现在它其实应该改名成<code>merge_keep_order_and_no_duplicate</code>，但太长了。
+</p>
+
+<code>let max_by f x y = if f x > f y then x else y
+
+let rec merge_keep_order combs_a combs_b =
+    match combs_a, combs_b with
+    | [], _ -> combs_b
+    | _, [] -> combs_a
+    | a1 :: combs_a_rest, b1 :: combs_b_rest ->
+        if total_weight a1 < total_weight b1 then
+            a1 :: merge_keep_order combs_a_rest combs_b
+        else if total_weight a1 > total_weight b1 then
+            b1 :: merge_keep_order combs_a combs_b_rest
+        else // total_weight a1 = total_weight b1
+            let r1 = max_by total_value a1 b1
+            r1 :: merge_keep_order combs_a_rest combs_b_rest</code>
+
+<p>
+  在做出修改后，
+<ol>
+  <li><code>merge_keep_order</code>的返回值的长度不会再超过背包容量了。</li>
+  <li>这意味着<code>all_combinations_valid_ordered</code>的返回值的长度也不会再超过背包容量了。</li>
+  <li>于是，<code>merge_keep_order</code>的时间复杂度降为了O(背包容量)。</li>
+  <li><code>all_combinations_valid_ordered</code>的时间复杂度降为了O(物品数量 * 背包容量)</li>
+</ol>
+达到了这题的最优时间复杂度。
+</p>
+
+<hr>
+
+<h2>总结</h2>
+
+<p>
+  这篇文章的内容是我某天早上躺在床上的突发奇想，从第一版到第五版，完全没有经过任何调试，但却能轻松地证明正确性。这得益于函数式编程的优势：
+<ol>
+  <li>
+    不使用for循环，使用递归。不需要追踪下标了，这在证明程序的正确性时会方便许多。
+  </li>
+  <li>依赖库函数进行遍历。高阶函数（接受函数的函数，比如<code>List.filter</code>）让我能把一次for循环缩写成一次函数调用，一眼就看出这次遍历是在做什么。</li>
+  <li>
+    不存在非法状态，每个能访问的值都是有效的。要想从列表中获取元素，必须使用模式匹配（<code>match with</code>）。
+    这迫使我必须考虑列表为空的情况，保证不会忘记。
+  </li>
+  <li>
+    传递和构造新列表，而不是就地修改数组中的元素。
+    在用命令式风格写dp时，<code>dp[i - k]</code>在<code>dp[i]</code>之前算出还是之后算出，决定了是用这一轮的还是用上一轮的<code>dp[i - k]</code>更新<code>dp[i]</code>。
+    而函数式风格的代码中，总是能明确地区分出哪些是上一轮的数据，因为这是两个不同的变量。
+  </li>
+</ol>
+</p>
+
+<p>
+  当然，从来就没有银弹。我们需要可读性和效率之间做取舍。函数式风格固然好理解，但还是有一些优化的余地的。
+  接下来可以再进一步，将列表替换成两个滚动数组，甚至是一个数组，但这就不是本文的范畴了。
+</p>
+
+<p>
+  另外，如果你感兴趣，可以考虑一下怎么把上面的做法拓展到<a href="https://oi-wiki.org/dp/knapsack/">其它的变种背包问题</a>。
+</p>
+<hr>
+
+<h2>附、尾递归转换</h2>
+
+<p>我们可以将两个递归函数转化成尾递归的风格，以节约调用栈。</p>
+
+<code>let rec merge_keep_order combs_a combs_b =
+    let rec merge combs_a combs_b acc =
+        match combs_a, combs_b with
+        | [], rest
+        | rest, [] -> List.append (List.rev acc) rest
+        | a1 :: combs_a_rest, b1 :: combs_b_rest ->
+            if total_weight a1 < total_weight b1 then
+                merge combs_a_rest combs_b (a1 :: acc)
+            else if total_weight a1 > total_weight b1 then
+                merge combs_a combs_b_rest (b1 :: acc)
+            else
+                let r1 = max_by total_value a1 b1
+                merge combs_a_rest combs_b_rest (r1 :: acc)
+
+    merge combs_a combs_b []</code>
+
+<p>
+  <code>all_combinations</code>不仅进行了尾递归转换，还消去了一个列表翻转。因为items中物品的顺序不影响结果。
+</p>
+
+<code>let rec all_combinations (items: item list) (combs_so_far: combination list) : combination list =
+    match items with
+    | [] -> combs_so_far
+    | item1 :: item_rest ->
+        let combs_without_item1 = combs_so_far
+        let combs_can_add_item1 = List.takeWhile (can_add item1) combs_without_item1
+        let combs_with_item1 = List.map (add item1) combs_can_add_item1
+
+        merge_keep_order_and_no_duplicate combs_with_item1 combs_without_item1
+        |> all_combinations item_rest
+
+let comb = all_combinations items [ empty_combination ] |> List.maxBy total_value
+...
+</code>
