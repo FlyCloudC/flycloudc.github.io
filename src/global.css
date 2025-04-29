@@ -64,12 +64,16 @@ hr {
 }
 
 code {
+  padding: 0.1em 0.1em;
+  background-color: var(--background-color-card);
+}
+
+post-section>code {
   margin: 1em 0;
+  padding: 0.25em 0.5em;
   display: block;
   overflow-x: auto;
   white-space: pre;
-  padding: 0.25em 0.5em;
-  background-color: var(--background-color-card);
   border: 1px solid var(--border-color);
 }
 
