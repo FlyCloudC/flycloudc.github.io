@@ -3,8 +3,7 @@
 <hr>
 
 <p>
-  01背包是算法竞赛中的经典dp题目，当年我在这上面吃了不少苦头，每次写背包问题都晕头转向。
-  本文一共包含5个版本的代码。第一个版本是最朴素的枚举法，在不断的改进下，将最终变成一个dp解法。
+  01背包是算法竞赛中的经典dp题目，当年我在这上面吃了不少苦头，每次写背包问题都晕头转向。本文一共包含5个版本的代码。第一个版本是最朴素的枚举法，在不断的改进下，将最终变成一个dp解法。
 </p>
 
 <p>
@@ -37,8 +36,7 @@ let item_value item = item.value
 <h2>一、暴力枚举</h2>
 
 <p>
-  首先，我们定义物品组合为物品的列表。物品组合的总重量就是这个列表中所有物品按重量求和，总价值同理。
-  写F#代码就像讲废话一样轻松xd。
+  首先，我们定义物品组合为物品的列表。物品组合的总重量就是这个列表中所有物品按重量求和，总价值同理。写F#代码就像讲废话一样轻松xd。
 </p>
 
 <code>type combination = item list
@@ -46,8 +44,8 @@ let total_weight comb = List.sumBy item_weight comb
 let total_value comb = List.sumBy item_value comb</code>
 
 <p>
-  在F#中，<code>::</code>是列表拼接运算符，<code>a :: b</code>表示<u>把元素 a 加入到列表 b 的开头</u>得到的新列表。
-  我们定义函数<code>add</code>表示把物品加入到一个物品组合中。
+  在F#中，<code>::</code>是列表拼接运算符，<code>a :: b</code>表示<u>把元素 a 加入到列表 b
+    的开头</u>得到的新列表。我们定义函数<code>add</code>表示把物品加入到一个物品组合中。
 </p>
 
 <code>let add item comb = item :: comb</code>
@@ -59,14 +57,11 @@ let total_value comb = List.sumBy item_value comb</code>
 <code>let empty_combination = []</code>
 
 <p>
-  接下来，我们想办法先枚举所有的组合。函数<code>all_combinations</code>接受一个物品的列表，返回由这些物品构成的所有可能的组合的列表。
-  我们按物品列表是否为空来分情况讨论：
+  接下来，我们想办法先枚举所有的组合。函数<code>all_combinations</code>接受一个物品的列表，返回由这些物品构成的所有可能的组合的列表。我们按物品列表是否为空来分情况讨论：
 <ul>
   <li>如果物品列表为空，那么唯一的一种组合方式就是空的物品组合；</li>
   <li>
-    否则，一定存在第一个物品item1。我们先递归地求出那些不包含第一个物品的组合，再想办法求出那些包含第一个物品的组合。
-    后一种组合其实是和前一种组合一一对应的，只需要把第一个物品加入其中。
-    把这两者拼接起来，即为最终结果。
+    否则，一定存在第一个物品item1。我们先递归地求出那些不包含第一个物品的组合，再想办法求出那些包含第一个物品的组合。后一种组合其实是和前一种组合一一对应的，只需要把第一个物品加入其中。把这两者拼接起来，即为最终结果。
   </li>
 </ul>
 </p>
@@ -98,9 +93,7 @@ let total_value comb = List.sumBy item_value comb</code>
 <h2>二、物品组合应该记录总重量和总价值</h2>
 
 <p>
-  我们修改物品组合的表示，现在它不单纯的是一个物品的列表，还带有额外的信息，即这个组合的总重量和总价值。
-  这使得<code>total_value</code>和<code>total_weight</code>不再需要遍历列表求和，时间复杂度由O(n)降到了O(1)。
-  这为后续的改进做了铺垫。
+  我们修改物品组合的表示，现在它不单纯的是一个物品的列表，还带有额外的信息，即这个组合的总重量和总价值。这使得<code>total_value</code>和<code>total_weight</code>不再需要遍历列表求和，时间复杂度由O(n)降到了O(1)。这为后续的改进做了铺垫。
 </p>
 
 <code>type combination =
@@ -182,8 +175,7 @@ let total_value comb = comb.total_value</code>
 </p>
 
 <p>
-  注意到：如果一个组合没法放入item1，那么比这个组合总重量更大的那些组合也一定都无法放入item1。
-  这也就是说，如果<code>all_combinations_valid</code>能返回一个<u>按总重量升序排列</u>的组合列表，那么过滤时就不需要遍历完整个列表了。
+  注意到：如果一个组合没法放入item1，那么比这个组合总重量更大的那些组合也一定都无法放入item1。这也就是说，如果<code>all_combinations_valid</code>能返回一个<u>按总重量升序排列</u>的组合列表，那么过滤时就不需要遍历完整个列表了。
 </p>
 
 <p>下面修改的地方有三处：
@@ -224,8 +216,7 @@ let rec merge_keep_order combs_a combs_b =
             b1 :: merge_keep_order combs_a combs_b_rest</code>
 
 <p>
-  虽然看起来有点啰嗦，但我还是想提一句：
-  通过查看代码，很容易证明<code>all_combinations_valid_ordered</code>的正确性——返回的组合列表确实是按总重量升序排列的。
+  虽然看起来有点啰嗦，但我还是想提一句：通过查看代码，很容易证明<code>all_combinations_valid_ordered</code>的正确性——返回的组合列表确实是按总重量升序排列的。
 </p>
 
 <hr>
@@ -241,8 +232,7 @@ let rec merge_keep_order combs_a combs_b =
 </p>
 
 <p>
-  我们只需要在<code>merge_keep_order</code>的末尾新增一种情况。
-  现在它其实应该改名成<code>merge_keep_order_and_no_duplicate</code>，但太长了。
+  我们只需要在<code>merge_keep_order</code>的末尾新增一种情况。现在它其实应该改名成<code>merge_keep_order_and_no_duplicate</code>，但太长了。
 </p>
 
 <code>let max_by f x y = if f x > f y then x else y
@@ -281,22 +271,20 @@ let rec merge_keep_order combs_a combs_b =
   <li>
     不使用for循环，使用递归。不需要追踪下标了，这在证明程序的正确性时会方便许多。
   </li>
-  <li>依赖库函数进行遍历。高阶函数（接受函数的函数，比如<code>List.filter</code>）让我能把一次for循环缩写成一次函数调用，一眼就看出这次遍历是在做什么。</li>
   <li>
-    不存在非法状态，每个能访问的值都是有效的。要想从列表中获取元素，必须使用模式匹配（<code>match with</code>）。
-    这迫使我必须考虑列表为空的情况，保证不会忘记。
+    依赖库函数进行遍历。高阶函数（接受函数的函数，比如<code>List.filter</code>）让我能把一次for循环缩写成一次函数调用，一眼就看出这次遍历是在做什么。
   </li>
   <li>
-    传递和构造新列表，而不是就地修改数组中的元素。
-    在用命令式风格写dp时，<code>dp[i - k]</code>在<code>dp[i]</code>之前算出还是之后算出，决定了是用这一轮的还是用上一轮的<code>dp[i - k]</code>更新<code>dp[i]</code>。
-    而函数式风格的代码中，总是能明确地区分出哪些是上一轮的数据，因为这是两个不同的变量。
+    不存在非法状态，每个能访问的值都是有效的。要想从列表中获取元素，必须使用模式匹配（<code>match with</code>）。这迫使我必须考虑列表为空的情况，保证不会忘记。
+  </li>
+  <li>
+    传递和构造新列表，而不是就地修改数组中的元素。在用命令式风格写dp时，<code>dp[i - k]</code>在<code>dp[i]</code>之前算出还是之后算出，决定了是用这一轮的还是用上一轮的<code>dp[i - k]</code>更新<code>dp[i]</code>。而函数式风格的代码中，总是能明确地区分出哪些是上一轮的数据，因为这是两个不同的变量。
   </li>
 </ol>
 </p>
 
 <p>
-  当然，从来就没有银弹。我们需要可读性和效率之间做取舍。函数式风格固然好理解，但还是有一些优化的余地的。
-  接下来可以再进一步，将列表替换成两个滚动数组，甚至是一个数组，但这就不是本文的范畴了。
+  当然，从来就没有银弹。我们需要可读性和效率之间做取舍。函数式风格固然好理解，但还是有一些优化的余地的。接下来可以再进一步，将列表替换成两个滚动数组，甚至是一个数组，但这就不是本文的范畴了。
 </p>
 
 <p>
