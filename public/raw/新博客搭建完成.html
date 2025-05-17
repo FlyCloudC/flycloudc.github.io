@@ -126,7 +126,7 @@
 
 <p>
   另外为了实现单页应用的效果，还需要服务器的配合。比如我访问一个xxx/yyy.html，服务器应该直接返回index.html。在index.html的js中再根据当前路径获取对应的内容。然而github
-  pages并不支持这样的配置。好在github pages会默认返回的404.html。所以只需要在workflow中加上这么一行：
+  pages并不支持这样的配置。好在github pages在找不到页面时会默认返回404.html。所以只需要在workflow中加上这么一行：
 </p>
 
 <code>- name: Copy 404.html
