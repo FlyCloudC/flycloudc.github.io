@@ -75,7 +75,7 @@ export class RootApp extends LitElement {
       <main>
         <aside>
           <figure>
-            <img class="avatar" src="/assets/avatar.png" alt="头像">
+            <img class="avatar" src="/assets/avatar.jpg" alt="头像">
             <figcaption>FlyCloudC<span>Learning Abstraction</span></figcaption>
           </figure>
           <div>
